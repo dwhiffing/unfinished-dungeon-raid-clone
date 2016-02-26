@@ -51,6 +51,22 @@ initBG = ->
       setSize(bg,_.tSize)
       _.bgGroup.add bg
 
+initTileGrid = ->
+  _.gridMoving = false
+  _.lTile      = null
+  _.tiles      = _.add.group()
+  
+  # create tile array object to hold data for each tile
+  _.tileArray  = new jMatch3.Grid(width: _.rSize, height: _.cSize)
+  for row in [0..._.rSize]
+    for col in [0..._.cSize]
+      initTile _.tileArray.getPiece({x:row,y:col})
+  _.bgGroup.add _.tileGrid
+  _.tileArray.top = _.startY
+  _.tileArray.left = _.startX
+  _.tileArray.right = _.startX+(_.tSize*_.rSize)
+  _.tileArray.bottom = _.startY+(_.tSize*_.cSize)
+
 initUI = ->
   _.fgGroup = _.add.group()
 
@@ -63,12 +79,39 @@ initUI = ->
   _.hallGraphics.beginFill 0xaaaaaa
   _.fgGroup.add _.hallGraphics
 
+  _.testGraphics = _.add.graphics(150,20)
+  _.testGraphics.beginFill 0xaaaaaa
+  _.fgGroup.add _.testGraphics
+
   _.roomGraphics = _.add.graphics(150,20)
   _.roomGraphics.beginFill 0xffffff
   _.fgGroup.add _.roomGraphics
 
+  doorCoords = [ { x:_.width/2,  y:_.tileArray.top-_.tSize/2, dir: "top" }, 
+                 { x:-_.tileArray.left-5,  y:_.height/2+_.tSize, dir: "left" }, 
+                 { x:_.tileArray.right+_.tSize/2, y:_.height/2+_.tSize, dir: "right" }, 
+                 { x:_.width/2,  y:_.tileArray.bottom-_.tSize/2, dir: "bottom" } ]
+
+  for i in doorCoords
+    # _.testGraphics.drawRect(i.x,i.y,10,10)
+    door = _.add.sprite(i.x,i.y,"door")
+    setSize(door,_.tSize)
+    door.anchor.setTo(.5,  1) if i.dir is "top"
+    door.anchor.setTo( 0, .5) if i.dir is "left"
+    door.anchor.setTo( 1, .5) if i.dir is "right"
+    door.anchor.setTo(.5,  0) if i.dir is "bottom"
+    door.inputEnabled = true
+    door.events.onInputDown.add checkDoor, this
+    _.fgGroup.add door
+    door.x = i.x
+    door.y = i.y
+    _.doors.push door
+
   createDungeon()
   drawRooms()
+
+  for quad in _.quads.withRooms
+    console.log quad.halls
 
   # createOldDungeon()
 
@@ -81,14 +124,15 @@ initUI = ->
   setSize _.hero, _.tSize/2
   _.fgGroup.add _.hero
 
+  # fullscreen button
+  fullscreen = _.add.sprite(20,20, "nothing")
+  fullscreen.inputEnabled = true
+  fullscreen.events.onInputDown.add goFull, this
+  _.stage.fullScreenScaleMode = Phaser.StageScaleMode.SHOW_ALL
+  _.fgGroup.add fullscreen
+
   # create overlay to fade between levels
   _.uiFade = _.add.graphics(0, 0);
   _.uiFade.beginFill 0x000000; _.uiFade.alpha = 1
   _.uiFade.drawRect 0, 0, _.width,_.height
   _.fgGroup.add _.uiFade
-
-  # fullscreen button
-  fullscreen = _.add.sprite(20,20, "minimap")
-  fullscreen.inputEnabled = true
-  fullscreen.events.onInputDown.add goFull, this
-  _.stage.fullScreenScaleMode = Phaser.StageScaleMode.SHOW_ALL

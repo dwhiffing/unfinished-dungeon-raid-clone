@@ -1,13 +1,15 @@
-Leaf = (X,Y,_width,_height) -> 
+Leaf = (X,Y,_width,_height,parent=null) -> 
   @x = X
   @y = Y
   @width = _width
   @height = _height
   @leftChild = null
   @rightChild = null
+  @parent
   @room = null
   @min_size = 15
   @halls = []
+  @parent = parent
   @split = ->
     return false if @leftChild? or @rightChild?
     # begin splitting the leaf into two children
@@ -33,14 +35,15 @@ Leaf = (X,Y,_width,_height) ->
     _x = @x
     _y = @y
     if splitH
-      @leftChild = new Leaf(_x, _y, _w, s)
-      @rightChild = new Leaf(_x, _y+s, _w, _h-s)
+      @leftChild = new Leaf(_x, _y, _w, s, @)
+      @rightChild = new Leaf(_x, _y+s, _w, _h-s,@)
     else
-      @leftChild = new Leaf(_x, _y, s, _h)
-      @rightChild = new Leaf(_x+s, _y, _w-s, _h)
+      @leftChild = new Leaf(_x, _y, s, _h,@)
+      @rightChild = new Leaf(_x+s, _y, _w-s, _h,@)
     
     return true
-  @createRooms = -> # this function generates all the rooms and hallways for this Leaf and all of its children.
+  @createRooms = -> 
+  # this function generates all the rooms and hallways for this Leaf and all of its children.
     if @leftChild? or @rightChild?
       # this leaf has been split, so go into the children leafs
       @leftChild.createRooms() if @leftChild?
@@ -60,12 +63,14 @@ Leaf = (X,Y,_width,_height) ->
         y: @y + roomPosY
         w: roomSizeX
         h: roomSizeY
+        player: false
       }
       _.rooms.push @room
+
   @getRoom = ->
     # iterate all the way through these leafs to find a room, if one exists.
     if @room?
-      return @room;
+      return @room
     else
       lRoom = @leftChild.getRoom() if @leftChild?
       rRoom = @rightChild.getRoom() if @rightChild?
@@ -84,7 +89,7 @@ Leaf = (X,Y,_width,_height) ->
     # this looks pretty complicated, but it's just trying to figure out which point is where and then either draw a straight line, or a pair of lines to make a right-angle to connect them.
     # you could do some extra logic to make your halls more bendy, or do some more advanced things if you wanted.
     
-    _w = 1
+    hallThickness = 1
 
     point1X = _.rnd.integerInRange(l.x + 1, l.w+l.x - 2)
     point1Y = _.rnd.integerInRange(l.y + 1, l.h+l.y - 2)
@@ -97,41 +102,50 @@ Leaf = (X,Y,_width,_height) ->
     if (w < 0)
       if (h < 0)
         if (Math.random() * 0.5)
-          _.halls.push( {x: point2X, y: point1Y, w: Math.abs(w), h: _w} );
-          _.halls.push( {x: point2X, y: point2Y, w: _w, h: Math.abs(h)})
+          @pushHall( point2X, point1Y, Math.abs(w), hallThickness )
+          @pushHall( point2X, point2Y, hallThickness, Math.abs(h) )
         else
-          _.halls.push( {x: point2X, y: point2Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point1X, y: point2Y, w: _w, h: Math.abs(h)})
+          @pushHall( point2X, point2Y, Math.abs(w), hallThickness )
+          @pushHall( point1X, point2Y, hallThickness, Math.abs(h) )
       else if (h > 0)
         if (Math.random() * 0.5)
-          _.halls.push( {x: point2X, y: point1Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point2X, y: point1Y, w: _w, h: Math.abs(h)})
+          @pushHall( point2X, point1Y, Math.abs(w), hallThickness )
+          @pushHall( point2X, point1Y, hallThickness, Math.abs(h) )
         else
-          _.halls.push( {x: point2X, y: point2Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point1X, y: point1Y, w: _w, h: Math.abs(h)})
+          @pushHall( point2X, point2Y, Math.abs(w), hallThickness )
+          @pushHall( point1X, point1Y, hallThickness, Math.abs(h) )
       else # if (h == 0)
-        _.halls.push( {x: point2X, y: point2Y, w: Math.abs(w), h: _w})
+        @pushHall( point2X, point2Y, Math.abs(w), hallThickness )
     else if (w > 0)
       if (h < 0)
         if (Math.random() * 0.5)
-          _.halls.push( {x: point1X, y: point2Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point1X, y: point2Y, w: _w, h: Math.abs(h)})
+          @pushHall( point1X, point2Y, Math.abs(w), hallThickness )
+          @pushHall( point1X, point2Y, hallThickness, Math.abs(h) )
         else
-          _.halls.push( {x: point1X, y: point1Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point2X, y: point2Y, w: _w, h: Math.abs(h)})
+          @pushHall( point1X, point1Y, Math.abs(w), hallThickness )
+          @pushHall( point2X, point2Y, hallThickness, Math.abs(h) )
       else if (h > 0)
         if (Math.random() * 0.5)
-          _.halls.push( {x: point1X, y: point1Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point2X, y: point1Y, w: _w, h: Math.abs(h)})
+          @pushHall( point1X, point1Y, Math.abs(w), hallThickness )
+          @pushHall( point2X, point1Y, hallThickness, Math.abs(h) )
         else
-          _.halls.push( {x: point1X, y: point2Y, w: Math.abs(w), h: _w})
-          _.halls.push( {x: point1X, y: point1Y, w: _w, h: Math.abs(h)})
+          @pushHall( point1X, point2Y, Math.abs(w), hallThickness )
+          @pushHall( point1X, point1Y, hallThickness, Math.abs(h) )
       else # if (h == 0)
-        _.halls.push( {x: point1X, y: point1Y, w: Math.abs(w), h: _w})
+        @pushHall( point1X, point1Y, Math.abs(w), hallThickness )
     else # if (w == 0)
       if (h < 0)
-        _.halls.push( {x: point2X, y: point2Y, w: _w, h: Math.abs(h)})
+        @pushHall( point2X, point2Y, hallThickness, Math.abs(h) )
       else if (h > 0)
-        _.halls.push( {x: point1X, y: point1Y, w: _w, h: Math.abs(h)})
+        @pushHall( point1X, point1Y, hallThickness, Math.abs(h) )
+
+
+  @pushHall = (X,Y,W,H) ->
+    # debugger
+    hall = { x:X, y:Y, w:W, h:H }
+    _.halls.push hall
+    @leftChild.halls.push hall
+    @rightChild.halls.push hall
+
 
   return this

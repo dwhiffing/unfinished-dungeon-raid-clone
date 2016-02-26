@@ -1,15 +1,3 @@
-initTileGrid = ->
-  _.gridMoving = false
-  _.lTile      = null
-  _.tiles      = _.add.group()
-  
-  # create tile array object to hold data for each tile
-  _.tileArray  = new jMatch3.Grid(width: _.rSize, height: _.cSize)
-  for row in [0..._.rSize]
-    for col in [0..._.cSize]
-      initTile _.tileArray.getPiece({x:row,y:col})
-  _.bgGroup.add _.tileGrid
-
 initTile = (_t) ->
   # place tile according to start position and size of grid, reference data object
   xPos        = _.startX + _.tSize * _t.x
@@ -50,6 +38,10 @@ initTile = (_t) ->
       # remove this tile from the path if its deselected
       if _.pathMatches.length > 0 && @isMatched
         last(_.pathMatches).pop()
+
+  _t.o.destroyIfLone = (tile) ->
+    if !@hasMatch
+      @destroy() 
 
   _t.o.reset = -> @alpha = 0; @type = -1
 

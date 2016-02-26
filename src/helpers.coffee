@@ -69,6 +69,7 @@ newRoom = ->
   setRoomSize()
   fadeIn()
   doNextAction()
+  lockDoors()
 
 spawnTile = (tile) ->
   tile.selected = false;
@@ -141,6 +142,8 @@ drawRooms = ->
   for hall in _.halls
     _.hallGraphics.drawRect hall.x,hall.y,hall.w,hall.h
   for room in _.rooms
+    _.roomGraphics.beginFill 0xFFFFFF
+    _.roomGraphics.beginFill 0x00ff00 if room.player
     _.roomGraphics.drawRect room.x,room.y,room.w,room.h
   for quad in _.quads
     _.leafGraphics.drawRect quad.x,quad.y,quad.width,quad.height
@@ -157,13 +160,13 @@ createOldDungeon = ->
   _.mapGroup.y=20
   layer.resizeWorld();
   layer.y=100
-  console.log _.tilemap
 
 createDungeon = ->
   # create Leaf Based Dungeon - refactor into helper function
   _.mapGroup = _.add.group()
   _.floor = new Leaf(0,0,_.floorSize,_.floorSize)
   _.quads.push(_.floor)
+  _.quads.withRooms = []
 
   did_split = true
   # we loop through every Leaf in our Vector over and over again, until no more Leafs can be split.
@@ -180,3 +183,8 @@ createDungeon = ->
             did_split = true
 
   _.floor.createRooms()
+  for quad in _.quads
+    if quad.room?
+      # debugger
+      _.quads.withRooms.push quad
+  _.quads.withRooms[0].room.player = true

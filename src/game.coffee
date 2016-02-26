@@ -10,11 +10,7 @@ doNextAction = ->
       _.gridMoving = false
     # _.time.events.add _.popTime, doNextAction
     else
-      _.time.events.add 500, ->
-        _.tiles.callAll("destroy")
-        # _.sound.play "new"
-        fadeOut()
-        _.time.events.add 2000, newRoom
+      unlockDoors()
 
 checkCollisions = (tile) ->
   if _.uiFade.alpha is 0.4
@@ -71,6 +67,7 @@ checkMatches = ->
     for tile in match
       tile.isMatched = true
   drawArrow()
+  _.tiles.callAll("destroyIfLone")
 
 doMatch = (tile) ->
   # if tile is the same type as our last matched piece, add it to that match
@@ -86,3 +83,21 @@ doMatch = (tile) ->
         tile.isMatched = true
     # add it if it is large enough then check the current state of matches
     _.pathMatches.push(match) if match.length >= 3
+
+unlockDoors = ->
+  for door in _.doors
+    door.frame = 0
+
+lockDoors = ->
+  for door in _.doors
+    door.frame = 1
+
+checkDoor = (door) ->
+  unless !_.tileArray.getMatches()
+    _.time.events.add 500, ->
+      _.tiles.callAll("destroy")
+      # _.sound.play "new"
+      fadeOut()
+      _.time.events.add 2000, newRoom
+  else
+    # dont switch rooms

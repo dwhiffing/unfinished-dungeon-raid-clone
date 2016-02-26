@@ -23,6 +23,7 @@ else
 preload = ->
   _.load.tilemap "mapData", "js/minimap.json", null, Phaser.Tilemap.TILED_JSON
   _.load.spritesheet "tile", "img/tiles.png", 300, 300
+  _.load.spritesheet "door", "img/door.png", 200, 200
   _.load.spritesheet "bg-tiles", "img/bg-tiles.png", 200, 200
   _.load.image "mapImage", "img/minimap.png"
   _.load.image "top", "img/top.png"
@@ -54,6 +55,8 @@ initVars = ->
   _.quads       = []
   _.rooms       = []
   _.halls       = []
+  _.tiles       = []
+  _.doors       = []
   _.score       = 0
   _.numMatched  = 0
   _.combo       = 0
