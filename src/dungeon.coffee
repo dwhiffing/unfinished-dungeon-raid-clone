@@ -121,7 +121,9 @@ Dungeon =
 
 Renderer =
   Initialize: ->
-    @scale = (canvasSize/1.5) / Dungeon.map_size
+    @scale = (canvasSize/3) / Dungeon.map_size
+    @_y =31
+    @_x =(_.width/2)-(@scale*Dungeon.map_size/2)
     console.log Dungeon.rooms
     return
 
@@ -135,7 +137,7 @@ Renderer =
         _.miniMap.beginFill("0x424254", 1)
         _.miniMap.beginFill("0x351330", 1) if tile is 0
         _.miniMap.beginFill("0x64908A", 1) if tile is 1
-        _.miniMap.drawRect x * @scale, y * @scale, @scale, @scale
+        _.miniMap.drawRect x * @scale+@_x, y * @scale+@_y, @scale, @scale
         x++
       y++
     return

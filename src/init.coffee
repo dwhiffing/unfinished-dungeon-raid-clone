@@ -11,28 +11,43 @@ createGame = ->
 setRoomSize = ->
   # scale the tiles based on the size of the canvas and number of tiles
   # _.rSize      = _.rnd.integerInRange(4,7)
-  _.rSize      = 7
+  _.rSize      = 6
   _.cSize      = _.rSize
-  _.tSize      = _.width//_.rSize
-  _.tSize      = 5 if _.tSize <5
+  _.tSize      = (canvasSize//_.rSize)*.95
   # place grid in the center of the screen
   _.startX     = _.tSize/2 + (_.width-_.tSize*_.rSize)/2
-  _.startY     = (_.tSize/2 + (_.height-_.tSize*_.cSize)/2)+50
+  _.startY     = (_.tSize/2 + (_.height-_.tSize*_.cSize)/2)+100
 
 initBG = ->
   _.bgGroup  = _.add.group()
   _.tileGrid = _.add.graphics(0, 0)
-  _.bgGroup.add _.tileGrid
   _.stage.backgroundColor = "#343435"
   initLine(_.tileGrid,1,0x000000,0,0)
   xPos = _.startX-_.tSize/2; yPos = _.startY-_.tSize/2
   # draw background grid
-  for row in [0.._.rSize+1]
+  for row in [0.._.rSize]
     _.tileGrid.moveTo xPos, yPos + row*_.tSize
     _.tileGrid.lineTo xPos + _.rSize*_.tSize, yPos + row*_.tSize
   for col in [0.._.cSize]
     _.tileGrid.moveTo xPos + col*_.tSize, yPos
     _.tileGrid.lineTo xPos + col*_.tSize, yPos + _.cSize*_.tSize
+  for num in [0.._.rSize-1]
+    side       = _.add.sprite(5, _.startY+num*_.tSize, "side")
+    side2       = _.add.sprite(_.width-5, _.startY+num*_.tSize, "side")
+    setSize(side,_.tSize)
+    setSize(side2,_.tSize)
+    side.width = _.tSize/4
+    side2.width = _.tSize/4
+    _.bgGroup.add(side)
+    _.bgGroup.add(side2)
+  for num in [-1.._.cSize]
+    top        = _.add.sprite(_.startX+num*_.tSize, _.startY-_.tSize, "top" )
+    top2       = _.add.sprite(_.startX+num*_.tSize, _.startY+_.tSize*_.cSize, "top" )
+    setSize(top,_.tSize)
+    setSize(top2,_.tSize)
+    _.bgGroup.add(top)
+    _.bgGroup.add(top2)
+
 
 initGrid = ->
   _.gridMoving = false
@@ -42,15 +57,23 @@ initGrid = ->
   for row in [0..._.rSize]
     for col in [0..._.cSize]
       initTile _.tileArray.getPiece({x:row,y:col})
+  _.bgGroup.add _.tileGrid
 
-initTile = (_t)->
+
+initTile = (_t) ->
   xPos       = _.startX + _.tSize * _t.x
   yPos       = _.startY + _.tSize * _t.y
+  _t.bg       = _.add.sprite(xPos, yPos, "bg-tiles")
+  _t.bg.frame = _.rnd.integerInRange(0,3)
+  _.bgGroup.add _t.bg
+  setSize(_t.bg,_.tSize)
   _t.o       = _.add.sprite(xPos, yPos, "tile")
   _t.o.t     = _t;
+    
   setSize _t.o, _.tSize*0.7
   _t.o.angle = Math.random() * (3 - (-3))
-  pulseTile _t.o; _.tiles.add _t.o
+  pulseTile _t.o; 
+  _.tiles.add _t.o
   _t.o.inputEnabled = true
   _t.o.events.onInputOver.add checkCollisions, this
 

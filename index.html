@@ -5,8 +5,17 @@
     <script src="lib/phaser.min.js"></script>
     <script src="lib/jMatch3.js"></script>
     <script src="scas.js"></script>
-    <body style="background-color: #222;"> 
-      <div id="super-candy-adventure-saga"></div>
-    </body>
   </head>
+  <body style="background-color: #222;"> 
+    <div id="container" style="margin: 0 auto">
+      <div id="super-candy-adventure-saga" style="margin:0 auto;"></div>
+    </div>
+  </body>
+  <script>
+    document.onreadystatechange = function () {
+      if (document.readyState == "complete") {
+        document.getElementById("container").style.width = document.getElementsByTagName("canvas")[0].width+"px"
+      }
+    }
+  </script>
 </html>
