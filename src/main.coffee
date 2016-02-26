@@ -34,7 +34,12 @@ preload = ->
 
 create = ->
   initVars()
-  createGame()
+  setRoomSize();
+  # Dungeon.Generate()
+  initBG();
+  initTileGrid();
+  initUI();
+  newRoom();
 
 update = ->
 
@@ -54,6 +59,7 @@ initVars = ->
   _.numTypes   = 5
   _.maxPopTime = 150
   _.popTime    = _.maxPopTime
+  _.floorSize  = 200
 
 _ = new Phaser.Game(
   width
