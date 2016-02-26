@@ -64,6 +64,12 @@ Leaf = (X,Y,_width,_height,parent=null) ->
         w: roomSizeX
         h: roomSizeY
         player: false
+        doors:{
+          top:false
+          bottom:false
+          right:false
+          left:false
+        }
       }
       _.rooms.push @room
 
@@ -89,63 +95,59 @@ Leaf = (X,Y,_width,_height,parent=null) ->
     # this looks pretty complicated, but it's just trying to figure out which point is where and then either draw a straight line, or a pair of lines to make a right-angle to connect them.
     # you could do some extra logic to make your halls more bendy, or do some more advanced things if you wanted.
     
-    hallThickness = 1
+    _t = 1
 
-    point1X = _.rnd.integerInRange(l.x + 1, l.w+l.x - 2)
-    point1Y = _.rnd.integerInRange(l.y + 1, l.h+l.y - 2)
-    point2X = _.rnd.integerInRange(r.x + 1, r.w+r.x - 2) 
-    point2Y = _.rnd.integerInRange(r.y + 1, r.h+r.y - 2)
+    p1X = _.rnd.integerInRange(l.x + 1, l.w+l.x - 2)
+    p1Y = _.rnd.integerInRange(l.y + 1, l.h+l.y - 2)
+    p2X = _.rnd.integerInRange(r.x + 1, r.w+r.x - 2) 
+    p2Y = _.rnd.integerInRange(r.y + 1, r.h+r.y - 2)
  
-    w = point2X - point1X
-    h = point2Y - point1Y
+    w = p2X - p1X
+    h = p2Y - p1Y
  
     if (w < 0)
       if (h < 0)
         if (Math.random() * 0.5)
-          @pushHall( point2X, point1Y, Math.abs(w), hallThickness )
-          @pushHall( point2X, point2Y, hallThickness, Math.abs(h) )
+          @pushHall( "bottom", p2X, p1Y, Math.abs(w), _t, p2X, p2Y, _t, Math.abs(h) )
         else
-          @pushHall( point2X, point2Y, Math.abs(w), hallThickness )
-          @pushHall( point1X, point2Y, hallThickness, Math.abs(h) )
+          @pushHall( "bottom", p2X, p2Y, Math.abs(w), _t, p1X, p2Y, _t, Math.abs(h) )
       else if (h > 0)
         if (Math.random() * 0.5)
-          @pushHall( point2X, point1Y, Math.abs(w), hallThickness )
-          @pushHall( point2X, point1Y, hallThickness, Math.abs(h) )
+          @pushHall( "right", p2X, p1Y, Math.abs(w), _t, p2X, p1Y, _t, Math.abs(h) )
         else
-          @pushHall( point2X, point2Y, Math.abs(w), hallThickness )
-          @pushHall( point1X, point1Y, hallThickness, Math.abs(h) )
+          @pushHall( "right", p2X, p2Y, Math.abs(w), _t, p1X, p1Y, _t, Math.abs(h) )
       else # if (h == 0)
-        @pushHall( point2X, point2Y, Math.abs(w), hallThickness )
+        @pushHall( "top", p2X, p2Y, Math.abs(w), _t )
     else if (w > 0)
       if (h < 0)
         if (Math.random() * 0.5)
-          @pushHall( point1X, point2Y, Math.abs(w), hallThickness )
-          @pushHall( point1X, point2Y, hallThickness, Math.abs(h) )
+          @pushHall( "left", p1X, p2Y, Math.abs(w), _t, p1X, p2Y, _t, Math.abs(h) )
         else
-          @pushHall( point1X, point1Y, Math.abs(w), hallThickness )
-          @pushHall( point2X, point2Y, hallThickness, Math.abs(h) )
+          @pushHall( "left", p1X, p1Y, Math.abs(w), _t, p2X, p2Y, _t, Math.abs(h) )
       else if (h > 0)
         if (Math.random() * 0.5)
-          @pushHall( point1X, point1Y, Math.abs(w), hallThickness )
-          @pushHall( point2X, point1Y, hallThickness, Math.abs(h) )
+          @pushHall( "asd", p1X, p1Y, Math.abs(w), _t, p2X, p1Y, _t, Math.abs(h) )
         else
-          @pushHall( point1X, point2Y, Math.abs(w), hallThickness )
-          @pushHall( point1X, point1Y, hallThickness, Math.abs(h) )
+          @pushHall( "asd", p1X, p2Y, Math.abs(w), _t, p1X, p1Y, _t, Math.abs(h) )
       else # if (h == 0)
-        @pushHall( point1X, point1Y, Math.abs(w), hallThickness )
+        @pushHall( "bbasd", p1X, p1Y, Math.abs(w), _t )
     else # if (w == 0)
       if (h < 0)
-        @pushHall( point2X, point2Y, hallThickness, Math.abs(h) )
+        @pushHall( "dddd", p2X, p2Y, _t, Math.abs(h) )
       else if (h > 0)
-        @pushHall( point1X, point1Y, hallThickness, Math.abs(h) )
+        @pushHall( "eeee", p1X, p1Y, _t, Math.abs(h) )
 
 
-  @pushHall = (X,Y,W,H) ->
+  @pushHall = (type, X,Y,W,H,X2=null,Y2=null,W2=null,H2=null) ->
     # debugger
-    hall = { x:X, y:Y, w:W, h:H }
-    _.halls.push hall
-    @leftChild.halls.push hall
-    @rightChild.halls.push hall
+    hall = []
+    if W > 1 or H > 1
+      hall.push {x:X, y:Y, w:W, h:H,t:type}
+      hall.push {x:X2, y:Y2, w:W2, h:H2,t:type} if X2? and (W2 > 1 or H2 > 1)
+
+      _.halls.push hall
+      @leftChild.halls.push hall
+      @rightChild.halls.push hall
 
 
   return this

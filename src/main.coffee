@@ -27,7 +27,8 @@ preload = ->
   _.load.spritesheet "bg-tiles", "img/bg-tiles.png", 200, 200
   _.load.image "mapImage", "img/minimap.png"
   _.load.image "top", "img/top.png"
-  _.load.image "side", "img/side.png"
+  _.load.image "side", "img/side2.png"
+  _.load.image "fs", "img/fullscreen.png"
   _.load.image "player", "img/hero.png"
   for n in [1..15]
     _.load.audio "pop"+n, "snd/pop"+n+".mp3"

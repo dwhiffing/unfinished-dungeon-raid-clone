@@ -138,15 +138,28 @@ checkArrowColour = (tile) ->
 goFull = ->
   _.stage.scale.startFullScreen()
 
-drawRooms = ->
+drawMinimap = ->
+  scl = _.tSize/25
   for hall in _.halls
-    _.hallGraphics.drawRect hall.x,hall.y,hall.w,hall.h
+    for line in hall
+      _.hallGraphics.drawRect line.x*scl,line.y*scl,line.w*scl,line.h*scl
   for room in _.rooms
     _.roomGraphics.beginFill 0xFFFFFF
     _.roomGraphics.beginFill 0x00ff00 if room.player
-    _.roomGraphics.drawRect room.x,room.y,room.w,room.h
-  for quad in _.quads
-    _.leafGraphics.drawRect quad.x,quad.y,quad.width,quad.height
+    _.roomGraphics.drawRect room.x*scl,room.y*scl,room.w*scl,room.h*scl
+  # for quad in _.quads
+  #   _.leafGraphics.drawRect quad.x*scl,quad.y*scl,quad.width*scl,quad.height*scl
+  _.leafGraphics.drawRect _.quads[0].x*scl,_.quads[0].y*scl,_.quads[0].width*scl,_.quads[0].height*scl
+  _.leafGraphics.width = _.quads[0].width*scl
+  _.leafGraphics.height = _.quads[0].height*scl
+  if _.width > _.height # landscape
+    for o in [_.leafGraphics,_.roomGraphics,_.hallGraphics]
+      o.x = _.tSize*.1
+      o.y = _.height-_.leafGraphics.height-_.tSize*.1
+  else #portrait
+    for o in [_.leafGraphics,_.roomGraphics,_.hallGraphics]
+      o.x = _.width-_.leafGraphics.width-_.tSize*.1
+      o.y = _.tSize*.1
 
 createOldDungeon = ->
   # load generated map data and create tilemap for minimap of dungeon
@@ -185,6 +198,20 @@ createDungeon = ->
   _.floor.createRooms()
   for quad in _.quads
     if quad.room?
-      # debugger
       _.quads.withRooms.push quad
   _.quads.withRooms[0].room.player = true
+  _.currentRoom = _.quads.withRooms[0]
+
+  for hall in _.currentRoom.halls
+    if hall[0].x > _.currentRoom.room.x
+      _.currentRoom.room.doors.right = true 
+      break
+    if hall[0].y < _.currentRoom.room.y
+      _.currentRoom.room.doors.top = true 
+      break
+    if hall[0].x < _.currentRoom.room.x
+      _.currentRoom.room.doors.left = true 
+      break
+    if hall[0].y > _.currentRoom.room.y
+      _.currentRoom.room.doors.bottom = true 
+      break

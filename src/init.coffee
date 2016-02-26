@@ -3,10 +3,15 @@ setRoomSize = ->
   # _.rSize      = _.rnd.integerInRange(4,7)
   _.rSize      = 6
   _.cSize      = _.rSize
-  _.tSize      = (canvasSize//_.rSize)*.95
+  _.tSize      = (canvasSize//_.rSize)*.85
   # place grid in the center of the screen
   _.startX     = _.tSize/2 + (_.width-_.tSize*_.rSize)/2
-  _.startY     = (_.tSize/2 + (_.height-_.tSize*_.cSize)/2)+100
+  _.startY     = _.tSize/2 + (_.height-_.tSize*_.cSize)/2
+  # shift grid to bottom/right based on orientation
+  if _.width > _.height
+    _.startX += (_.width-_.tSize*(_.rSize+1))/2
+  else
+    _.startY += (_.height-_.tSize*(_.cSize+1))/2.4
 
 initBG = ->
   _.bgGroup  = _.add.group()
@@ -25,12 +30,10 @@ initBG = ->
   
   # draw side tiles
   for num in [0.._.rSize-1]
-    side       = _.add.sprite(_.startX-35, _.startY+num*_.tSize, "side")
-    side2       = _.add.sprite(_.startX+_.cSize*_.tSize-25, _.startY+num*_.tSize, "side")
+    side       = _.add.sprite(_.startX-_.tSize, _.startY+num*_.tSize, "side")
+    side2       = _.add.sprite(_.startX+_.cSize*_.tSize, _.startY+num*_.tSize, "side")
     setSize(side,_.tSize)
     setSize(side2,_.tSize)
-    side.width = _.tSize/4
-    side2.width = _.tSize/4
     _.bgGroup.add(side)
     _.bgGroup.add(side2)
   
@@ -66,6 +69,8 @@ initTileGrid = ->
   _.tileArray.left = _.startX
   _.tileArray.right = _.startX+(_.tSize*_.rSize)
   _.tileArray.bottom = _.startY+(_.tSize*_.cSize)
+  _.tileArray.midX = _.startX+(_.tSize*_.rSize/2)
+  _.tileArray.midY = _.startY+(_.tSize*_.cSize/2)
 
 initUI = ->
   _.fgGroup = _.add.group()
@@ -75,40 +80,33 @@ initUI = ->
   _.leafGraphics.lineStyle 1, 0xff0000
   _.fgGroup.add _.leafGraphics
 
-  _.hallGraphics = _.add.graphics(150,20)
-  _.hallGraphics.beginFill 0xaaaaaa
-  _.fgGroup.add _.hallGraphics
-
-  _.testGraphics = _.add.graphics(150,20)
-  _.testGraphics.beginFill 0xaaaaaa
-  _.fgGroup.add _.testGraphics
-
   _.roomGraphics = _.add.graphics(150,20)
   _.roomGraphics.beginFill 0xffffff
   _.fgGroup.add _.roomGraphics
 
-  doorCoords = [ { x:_.width/2,  y:_.tileArray.top-_.tSize/2, dir: "top" }, 
-                 { x:-_.tileArray.left-5,  y:_.height/2+_.tSize, dir: "left" }, 
-                 { x:_.tileArray.right+_.tSize/2, y:_.height/2+_.tSize, dir: "right" }, 
-                 { x:_.width/2,  y:_.tileArray.bottom-_.tSize/2, dir: "bottom" } ]
+  _.hallGraphics = _.add.graphics(150,20)
+  _.hallGraphics.beginFill 0xaaaaaa
+  _.fgGroup.add _.hallGraphics
+
+  doorCoords = [ { x:_.tileArray.midX,  y:_.tileArray.top-_.tSize/2, dir: "top" }, 
+                 { x:-_.tileArray.left-5,  y:_.tileArray.midY, dir: "left" }, 
+                 { x:_.tileArray.right+_.tSize/2, y:_.tileArray.midY, dir: "right" }, 
+                 { x:_.tileArray.midX,  y:_.tileArray.bottom-_.tSize/2, dir: "bottom" } ]
 
   for i in doorCoords
-    # _.testGraphics.drawRect(i.x,i.y,10,10)
     door = _.add.sprite(i.x,i.y,"door")
     setSize(door,_.tSize)
     door.anchor.setTo(.5,  1) if i.dir is "top"
-    door.anchor.setTo( 0, .5) if i.dir is "left"
-    door.anchor.setTo( 1, .5) if i.dir is "right"
     door.anchor.setTo(.5,  0) if i.dir is "bottom"
+    door.anchor.setTo( 1, .5) if i.dir is "right"
+    door.anchor.setTo( 0, .5) if i.dir is "left"
     door.inputEnabled = true
     door.events.onInputDown.add checkDoor, this
     _.fgGroup.add door
-    door.x = i.x
-    door.y = i.y
     _.doors.push door
 
   createDungeon()
-  drawRooms()
+  drawMinimap()
 
   for quad in _.quads.withRooms
     console.log quad.halls
@@ -125,7 +123,8 @@ initUI = ->
   _.fgGroup.add _.hero
 
   # fullscreen button
-  fullscreen = _.add.sprite(20,20, "nothing")
+  fullscreen = _.add.sprite(20,20, "fs")
+  setSize(fullscreen,_.tSize/2)
   fullscreen.inputEnabled = true
   fullscreen.events.onInputDown.add goFull, this
   _.stage.fullScreenScaleMode = Phaser.StageScaleMode.SHOW_ALL
