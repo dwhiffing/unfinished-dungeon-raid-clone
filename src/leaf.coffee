@@ -6,7 +6,7 @@ Leaf = (X,Y,_width,_height) ->
   @leftChild = null
   @rightChild = null
   @room = null
-  @min_size = 20
+  @min_size = 15
   @halls = []
   @split = ->
     return false if @leftChild? or @rightChild?
@@ -53,8 +53,8 @@ Leaf = (X,Y,_width,_height) ->
       roomSizeY = _.rnd.integerInRange(5, 10)
       # place the room within the Leaf, but don't put it right 
       # against the side of the Leaf (that would merge rooms together)
-      roomPosX = _.rnd.integerInRange(1, @width - roomSizeX - 1)
-      roomPosY = _.rnd.integerInRange(1, @height - roomSizeY - 1)
+      roomPosX = _.rnd.integerInRange(1, @width - roomSizeX - 4)
+      roomPosY = _.rnd.integerInRange(1, @height - roomSizeY - 4)
       @room = {
         x: @x + roomPosX
         y: @y + roomPosY
@@ -84,7 +84,7 @@ Leaf = (X,Y,_width,_height) ->
     # this looks pretty complicated, but it's just trying to figure out which point is where and then either draw a straight line, or a pair of lines to make a right-angle to connect them.
     # you could do some extra logic to make your halls more bendy, or do some more advanced things if you wanted.
     
-    _w = 2
+    _w = 1
 
     point1X = _.rnd.integerInRange(l.x + 1, l.w+l.x - 2)
     point1Y = _.rnd.integerInRange(l.y + 1, l.h+l.y - 2)

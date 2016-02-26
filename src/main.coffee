@@ -35,7 +35,6 @@ preload = ->
 create = ->
   initVars()
   setRoomSize();
-  # Dungeon.Generate()
   initBG();
   initTileGrid();
   initUI();
@@ -48,18 +47,21 @@ render = ->
 
 initVars = ->
   # init global game vars
-  _.tilesToPop = []
-  _.path       = []
-  _.arrows     = []
-  _.pathMatches= []
-  _.score      = 0
-  _.numMatched = 0
-  _.combo      = 0
-  _.level      = 0
-  _.numTypes   = 5
-  _.maxPopTime = 150
-  _.popTime    = _.maxPopTime
-  _.floorSize  = 200
+  _.tilesToPop  = []
+  _.path        = []
+  _.arrows      = []
+  _.pathMatches = []
+  _.quads       = []
+  _.rooms       = []
+  _.halls       = []
+  _.score       = 0
+  _.numMatched  = 0
+  _.combo       = 0
+  _.level       = 0
+  _.numTypes    = 5
+  _.maxPopTime  = 150
+  _.popTime     = _.maxPopTime
+  _.floorSize   = 70
 
 _ = new Phaser.Game(
   width

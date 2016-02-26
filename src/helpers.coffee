@@ -136,3 +136,47 @@ checkArrowColour = (tile) ->
 
 goFull = ->
   _.stage.scale.startFullScreen()
+
+drawRooms = ->
+  for hall in _.halls
+    _.hallGraphics.drawRect hall.x,hall.y,hall.w,hall.h
+  for room in _.rooms
+    _.roomGraphics.drawRect room.x,room.y,room.w,room.h
+  for quad in _.quads
+    _.leafGraphics.drawRect quad.x,quad.y,quad.width,quad.height
+
+createOldDungeon = ->
+  # load generated map data and create tilemap for minimap of dungeon
+  Dungeon.Generate()
+  
+  _.cache._tilemaps.mapData.data.layers[0].data = _.mapData
+  _.tilemap    = _.add.tilemap("mapData")
+  _.tilemap.addTilesetImage(0, "mapImage");
+  layer = _.tilemap.createLayer(0,_.width,_.height,_.mapGroup);
+  _.mapGroup.x=_.width/2-(_.tilemap.widthInPixels+30)/2
+  _.mapGroup.y=20
+  layer.resizeWorld();
+  layer.y=100
+  console.log _.tilemap
+
+createDungeon = ->
+  # create Leaf Based Dungeon - refactor into helper function
+  _.mapGroup = _.add.group()
+  _.floor = new Leaf(0,0,_.floorSize,_.floorSize)
+  _.quads.push(_.floor)
+
+  did_split = true
+  # we loop through every Leaf in our Vector over and over again, until no more Leafs can be split.
+  while (did_split)
+    did_split = false
+    for l in _.quads
+      if !l.leftChild? and !l.rightChild? # if this Leaf is not already split...
+        # if this Leaf is too big, or 75% chance...
+        if l.width > 10 or l.height > 10 or Math.random() > 0.25
+          if l.split() # split the Leaf!
+            # if we did split, push the child leafs to the Vector so we can loop into them next
+            _.quads.push(l.leftChild)
+            _.quads.push(l.rightChild)
+            did_split = true
+
+  _.floor.createRooms()
