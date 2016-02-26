@@ -1,19 +1,19 @@
 # Set view port size
-_height = window.window.innerHeight - 20
-_width = window.window.innerWidth - 20
+_height = 400
+_width = 400
 # portrait
-if _height > _width 
+if _height > _width
   if width > 600 then width = 600 else width = _width
-  height = width*1.8 
+  height = width*1.8
   if height > _height then height = _height; width = height*.6
   canvasSize = width
 # landscape
-else 
+else
   if height > 600 then height = 600 else height = _height
   width = height*1.8
-  if width > _width then width = _width height = width*.6
+  if width > _width then width = _width; height = width*.6
   canvasSize = height
-  
+
 preload = ->
   _.load.spritesheet "tile", "assets/images/tiles.png", 300, 300
   _.load.spritesheet "door", "assets/images/door.png", 200, 200
@@ -52,8 +52,8 @@ render = ->
   debugTiles()
 
 _ = new Phaser.Game(
-  width
-  height
+  400
+  400
   Phaser.CANVAS, "super-candy-adventure-saga",
     preload: preload
     create: create

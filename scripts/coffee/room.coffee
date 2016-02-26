@@ -27,7 +27,7 @@ class Room
     doNextAction()
     _.Interface.newDoors()
     _.Interface.drawMinimap()
-    
+
   setSize: ->
     # scale the tiles based on the size of the canvas and number of tiles
     sizeX   = _.rnd.integerInRange(4,7)
@@ -90,11 +90,13 @@ class Room
     matches
 
   checkMatches: ->
+    noMatches = true
     # get all the current matches and reset the tile booleans
     @spriteGroup.callAll("resetMatch")
     # set a boolean if a tile has a possible match or:
     for match in @getMatches()
       for tile in match
+        noMatches = false
         tile.hasMatch = true
     # that match is selected in the path
     for match in _.Path.matches
@@ -103,5 +105,8 @@ class Room
         _.Path.matches.pop()
       for tile in match
         tile.isMatched = true
+
+    if noMatches
+      this.create()
     _.Path.drawArrow()
     @spriteGroup.callAll("destroyIfLone")

@@ -4,15 +4,14 @@ gulpif = require 'gulp-if'
 
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
-sass = require 'gulp-sass'
 refresh = require 'gulp-livereload'
 imagemin = require 'gulp-imagemin'
 
 connect = require 'connect'
 http = require 'http'
 path = require 'path'
-lr = require 'tiny-lr'
-server = lr()
+# lr = require 'tiny-lr'
+# server = lr()
 rmdir = require 'rimraf'
 
 gulp.task 'webserver', ->
@@ -28,45 +27,40 @@ gulp.task 'webserver', ->
   http.createServer(app).listen port, hostname
 
 # Starts the livereload server
-gulp.task 'livereload', ->
-  server.listen 35729, (err) ->
-    console.log err if err?
+# gulp.task 'livereload', ->
+#   server.listen 35729, (err) ->
+#     console.log err if err?
 
 gulp.task 'vendor', ->
   gulp.src 'scripts/vendor/*.js'
     .pipe concat 'vendor.js'
     .pipe gulp.dest 'dist/assets/'
-    .pipe refresh server
 
 gulp.task 'scripts', ->
   gulp.src 'scripts/coffee/*.coffee'
     .pipe coffee({bare: true}).on 'error', gutil.log
     .pipe concat 'scripts.js'
     .pipe gulp.dest 'dist/assets/'
-    .pipe refresh server
-
-gulp.task 'styles', ->
-  gulp.src 'styles/scss/init.scss'
-    .pipe sass includePaths: ['styles/scss/includes']
-    .pipe concat 'styles.css'
-    .pipe gulp.dest 'dist/assets/'
-    .pipe refresh server
+#
+# gulp.task 'styles', ->
+#   gulp.src 'styles/scss/init.scss'
+#     .pipe sass includePaths: ['styles/scss/includes']
+#     .pipe concat 'styles.css'
+#     .pipe gulp.dest 'dist/assets/'
+#     .pipe refresh server
 
 gulp.task 'html', ->
   gulp.src '*.html'
     .pipe gulp.dest 'dist/'
-    .pipe refresh server
 
 gulp.task 'images', ->
   gulp.src 'resources/images/**'
     .pipe imagemin()
     .pipe gulp.dest 'dist/assets/images/'
-    .pipe refresh server
 
 gulp.task 'sounds', ->
   gulp.src 'resources/sounds/**'
     .pipe gulp.dest 'dist/assets/sounds/'
-    .pipe refresh server
 
 gulp.task 'watch', ->
   gulp.watch 'scripts/vendor/**', ['vendor']
@@ -80,13 +74,12 @@ gulp.task 'clean', ->
   rmdir 'dist', () ->
 
 gulp.task 'build', [
-          'clean', 
-          'vendor', 
-          'scripts', 
-          'styles', 
-          'images', 
-          # 'sounds', 
+          'clean',
+          'vendor',
+          'scripts',
+          'images',
+          # 'sounds',
           'html'
         ]
 
-gulp.task 'default', ['webserver', 'livereload', 'build', 'watch']
+gulp.task 'default', ['webserver', 'build', 'watch']
