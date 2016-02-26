@@ -15,25 +15,27 @@ create = ->
 
 update = ->
 
-render = -> debugTiles()
+render = -> 
+  debugTiles()
 
 initVars = ->
   # init global game vars
   _.tilesToPop = []
   _.path       = []
   _.arrows     = []
-  _.matches    = []
+  _.pathMatches    = []
   _.score      = 0
   _.numMatched = 0
   _.combo      = 0
   _.level      = 0
   _.numTypes   = 4
-  _.popTime    = 10
+  _.maxPopTime = 150
+  _.popTime    = _.maxPopTime
 
 _ = new Phaser.Game(
   canvasSize
   canvasSize
-  Phaser.CANVAS, "", 
+  Phaser.CANVAS, "super-candy-adventure-saga", 
     preload: preload
     create: create
     update: update

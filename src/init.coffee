@@ -1,13 +1,20 @@
-createGame = ->
-  setRoomSize()
-  initBG()
-  initGrid()
-  initUI()
-  newRoom()
+createGame = -> setRoomSize(); initBG(); initGrid(); initUI(); newRoom();
+
+setRoomSize = ->
+  # scale the tiles based on the size of the canvas and number of tiles
+  # _.rSize      = _.rnd.integerInRange(4,7)
+  _.rSize      = 7
+
+  _.cSize      = _.rSize
+  _.tSize      = _.width//_.rSize
+  _.tSize      = 5 if _.tSize <5
+  # place grid in the center of the screen
+  _.startX     = _.tSize/2 + (_.width-_.tSize*_.rSize)/2
+  _.startY     = _.tSize/2 + (_.height-_.tSize*_.cSize)/2
 
 initBG = ->
-  _.bgGroup  = _.add.group();  
-  _.tileGrid = _.add.graphics(0, 0);
+  _.bgGroup  = _.add.group()
+  _.tileGrid = _.add.graphics(0, 0)
   _.bgGroup.add _.tileGrid
   _.stage.backgroundColor = "#343435"
   initLine(_.tileGrid,1,0x000000,0,0)
@@ -34,7 +41,7 @@ initTile = (_t)->
   yPos       = _.startY + _.tSize * _t.y
   _t.o       = _.add.sprite(xPos, yPos, "tile") 
   _t.o.t     = _t; 
-  setSize _t.o, _.tSize-20
+  setSize _t.o, _.tSize*0.7
   _t.o.angle = Math.random() * (3 - (-3))
   pulseTile _t.o; _.tiles.add _t.o
   _t.o.inputEnabled = true
@@ -44,6 +51,7 @@ initTile = (_t)->
     increaseScore()
     destroyTween(_t.o)
     _.combo++ if _.combo < 15
+    @hasMatch = false
     @isMatched = false
 
   _t.o.select = ->
@@ -51,19 +59,14 @@ initTile = (_t)->
       if @type isnt -1
         _.numMatched++; @alpha = 0.5
       _.path.push this; _.lTile = this; @selected = true;
-      debugger
-      checkMatches()
-
-
   _t.o.deselect = ->
     if @selected
-      if @type isnt -1
-        _.numMatched--; @alpha = 1 
       @selected = false
-      if _.matches.length > 0
-        if @inMatch
-          _.matches[_.matches.length-1].pop() 
-
+      if @type isnt -1
+        _.numMatched--
+        @alpha = 1 
+      if _.pathMatches.length > 0 && @isMatched
+        last(_.pathMatches).pop() 
 
   _t.o.reset = -> 
     @alpha = 0; @type = -1
@@ -85,3 +88,6 @@ initUI = ->
   _.uiFade.beginFill 0x000000; _.uiFade.alpha = 1
   _.uiFade.drawRect 0, 0, _.width, _.height
   _.fgGroup.add _.uiFade
+
+  _.miniMap  = _.add.graphics(0, 0)
+  _.fgGroup.add _.miniMap

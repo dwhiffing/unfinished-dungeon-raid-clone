@@ -1,3 +1,6 @@
+______________________________________________________________________________________________
+
+
 types of tiles:
   Entities:
     -Health
@@ -38,8 +41,7 @@ Bosses:
   How can bosses be designed?
 
 
-
-
+______________________________________________________________________________________________
 
 
   detect user agent to determine device
@@ -67,4 +69,28 @@ fix bugs:
     is it timed?
 
     is it life based?
+
+
+______________________________________________________________________________________________
+
+
+generate a floor with rooms of sizes 4-8 tiles high/wide
+
+connect them with random passages
+
+player will appear in a given room and be able to leave through the entrances and exits
+
+______________________________________________________________________________________________
+
+
+GENERATE FLOOR
+  ENTER ROOM
+    generate tile array based on size of floor and scale assets to fit screen
+  LEAVE ROOM
+    load size of next room
+
+rooms can have extra items inserted into them
+
+
+______________________________________________________________________________________________
 
