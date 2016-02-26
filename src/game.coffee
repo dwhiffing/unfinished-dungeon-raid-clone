@@ -16,24 +16,6 @@ doNextAction = ->
         fadeOut()
         _.time.events.add 2000, newRoom
 
-popTile = ->
-  _.gridMoving = true
-  if _.popTime>= 100 then _.popTime-=10 else _.popTime = 100
-  tile = _.tilesToPop.shift()
-  if tile is _.hero.t
-    _.lTile = tile.o
-    tile = _.tilesToPop.shift()
-  if tile? and tile.o.isMatched or tile.o.type is -1
-    if tile.o.type isnt -1
-      tile.o.destroy()
-      # _.time.events.add _.popTime/2, -> _.sound.play "pop"+_.combo
-    moveHero(tile.o.x, tile.o.y)
-    _.hero.t = tile
-    _.lTile = tile.o
-    _.time.events.add _.popTime, setPlayerCoords
-    _.hero.t.x = tile.o.t.x
-    _.hero.t.y = tile.o.t.y
-
 checkCollisions = (tile) ->
   if _.uiFade.alpha is 0.4
     if !_.lTile or tile.t isnt _.lTile.t

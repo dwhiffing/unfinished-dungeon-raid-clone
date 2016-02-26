@@ -1,14 +1,17 @@
 Dungeon =
   map: null
-  map_size: 70
+  map_size: 99
   rooms: []
+  EMPTY: 1
+  ROOM: 3
+  WALL: 2
   Generate: ->
     # init map array
     @map = []
     for x in [0..@map_size]
       @map[x]=[]
       for y in [0..@map_size]
-        @map[x][y]=0
+        @map[x][y]=@EMPTY
 
     # generate room data while ensuring that rooms don't overlap
     room_count = Helpers.GetRandom(10,20)
@@ -42,7 +45,7 @@ Dungeon =
           if pointB.x > pointA.x then pointB.x-- else pointB.x++
         else unless pointB.y is pointA.y
           if pointB.y > pointA.y then pointB.y-- else pointB.y++
-        @map[pointB.x][pointB.y] = 1
+        @map[pointB.x][pointB.y] = @ROOM
 
     # draw rooms
     for room in @rooms
@@ -50,23 +53,29 @@ Dungeon =
       while x < room.x + room.w
         y = room.y
         while y < room.y + room.h
-          @map[x][y] = 1
+          @map[x][y] = @ROOM
           y++
         x++
 
     # stroke around all the rooms and corridors to form wall
     for x in [0..@map_size]
       for y in [0..@map_size]
-        if @map[x][y] is 1
+        if @map[x][y] is @ROOM
           xx = x - 1
           while xx <= x + 1
             yy = y - 1
             while yy <= y + 1
-              @map[xx][yy] = 2  if @map[xx][yy] is 0
+              @map[xx][yy] = @WALL  if @map[xx][yy] is @EMPTY
               yy++
             xx++
         y++
       x++
+
+    _.mapData = []
+    for row in @map
+      for tile in row
+        _.mapData.push(tile)
+
     return
 
   FindClosestRoom: (_room) ->
@@ -118,29 +127,6 @@ Dungeon =
       return true  unless (room.x + room.w < check.x) or (room.x > check.x + check.w) or (room.y + room.h < check.y) or (room.y > check.y + check.h)
       i++
     false
-
-Renderer =
-  Initialize: ->
-    @scale = (canvasSize/3) / Dungeon.map_size
-    @_y =31
-    @_x =(_.width/2)-(@scale*Dungeon.map_size/2)
-    console.log Dungeon.rooms
-    return
-
-  Update: ->
-    y = 0
-    while y < Dungeon.map_size
-      x = 0
-      while x < Dungeon.map_size
-        tile = Dungeon.map[x][y]
-        _.miniMap.lineStyle(0);
-        _.miniMap.beginFill("0x424254", 1)
-        _.miniMap.beginFill("0x351330", 1) if tile is 0
-        _.miniMap.beginFill("0x64908A", 1) if tile is 1
-        _.miniMap.drawRect x * @scale+@_x, y * @scale+@_y, @scale, @scale
-        x++
-      y++
-    return
 
 Helpers =
   GetRandom: (low, high) ->

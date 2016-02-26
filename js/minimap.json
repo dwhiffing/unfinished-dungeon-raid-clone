@@ -1,0 +1,39 @@
+{ "height":100,
+ "layers":[
+        {
+         "data":[],
+         "height":100,
+         "name":"mapLayer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":100,
+         "x":200,
+         "y":200
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "tileheight":1.5,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"minimap.png",
+         "imageheight":16,
+         "imagewidth":48,
+         "margin":0,
+         "name":"mapTiles",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":16,
+         "tilewidth":16
+        }],
+ "tilewidth":1.5,
+ "version":1,
+ "width":100
+}

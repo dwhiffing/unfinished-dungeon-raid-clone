@@ -132,3 +132,7 @@ checkArrowColour = (tile) ->
     when 4 then "0xFFFF00"
     when 5 then "0xF0F000"
     else "0xFF00FF"
+
+
+goFull = ->
+  _.stage.scale.startFullScreen()
