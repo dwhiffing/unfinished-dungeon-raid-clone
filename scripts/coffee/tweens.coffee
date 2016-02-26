@@ -9,10 +9,10 @@ destroyTween = (obj) ->
   tween.start()
 
 moveHero = (newX, newY) ->
-  tween = _.add.tween(_.hero)
+  tween = _.add.tween(_.Player.sprite)
   tween.to
-    y: newY
     x: newX
+    y: newY
   , _.popTime, Phaser.Easing.Quadratic.Linear, true, 0
   tween.start()
 
@@ -27,14 +27,14 @@ pulseTile = (obj) ->
   tween.delay = 0
 
 fadeOut = ->
-  tween = _.add.tween(_.uiFade)
+  tween = _.add.tween(_.Interface.overlay)
   tween.to
     alpha: 1
   , 1000, Phaser.Easing.Linear.Out, true
   tween.start()
 
 fadeIn = ->
-  tween = _.add.tween(_.uiFade)
+  tween = _.add.tween(_.Interface.overlay)
   tween.to
     alpha: 0
   , 1000, Phaser.Easing.Linear.Out, true

@@ -1,21 +1,22 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <meta charset="utf-8"/>
+    <link type="text/css" rel="stylesheet" media="all" href="assets/styles.css">
     <title>Super Candy Adventure Saga</title>
-    <script src="lib/phaser.js"></script>
-    <script src="lib/jMatch3.js"></script>
-    <script src="scas.js"></script>
+    <script src="assets/vendor.js"></script>
+    <script src="assets/scripts.js"></script>
+    <script>
+      document.onreadystatechange = function () {
+        if (document.readyState == "complete") {
+          document.getElementById("container").style.width = document.getElementsByTagName("canvas")[0].width+"px"
+        }
+      }
+    </script>
   </head>
-  <body style="background-color: #222;"> 
+  <body style="background-color: #111;"> 
     <div id="container" style="margin: 0 auto">
       <div id="super-candy-adventure-saga" style="margin:0 auto;"></div>
     </div>
   </body>
-  <script>
-    document.onreadystatechange = function () {
-      if (document.readyState == "complete") {
-        document.getElementById("container").style.width = document.getElementsByTagName("canvas")[0].width+"px"
-      }
-    }
-  </script>
 </html>

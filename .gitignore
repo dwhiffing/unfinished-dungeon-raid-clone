@@ -1,3 +1,5 @@
 scas.js
 tmp/notes
 .DS_Store
+dist/
+node_modules
