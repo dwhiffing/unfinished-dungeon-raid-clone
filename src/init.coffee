@@ -1,16 +1,23 @@
-createGame = -> setRoomSize(); initBG(); initGrid(); initUI(); newRoom();
+createGame = ->
+  setRoomSize();
+  initBG();
+  initGrid();
+  initUI();
+  newRoom();
+  Dungeon.Generate()
+  Renderer.Initialize()
+  Renderer.Update Dungeon.map
 
 setRoomSize = ->
   # scale the tiles based on the size of the canvas and number of tiles
   # _.rSize      = _.rnd.integerInRange(4,7)
   _.rSize      = 7
-
   _.cSize      = _.rSize
   _.tSize      = _.width//_.rSize
   _.tSize      = 5 if _.tSize <5
   # place grid in the center of the screen
   _.startX     = _.tSize/2 + (_.width-_.tSize*_.rSize)/2
-  _.startY     = _.tSize/2 + (_.height-_.tSize*_.cSize)/2
+  _.startY     = (_.tSize/2 + (_.height-_.tSize*_.cSize)/2)+50
 
 initBG = ->
   _.bgGroup  = _.add.group()
@@ -39,14 +46,14 @@ initGrid = ->
 initTile = (_t)->
   xPos       = _.startX + _.tSize * _t.x
   yPos       = _.startY + _.tSize * _t.y
-  _t.o       = _.add.sprite(xPos, yPos, "tile") 
-  _t.o.t     = _t; 
+  _t.o       = _.add.sprite(xPos, yPos, "tile")
+  _t.o.t     = _t;
   setSize _t.o, _.tSize*0.7
   _t.o.angle = Math.random() * (3 - (-3))
   pulseTile _t.o; _.tiles.add _t.o
   _t.o.inputEnabled = true
   _t.o.events.onInputOver.add checkCollisions, this
-  
+
   _t.o.destroy = ->
     increaseScore()
     destroyTween(_t.o)
@@ -64,14 +71,14 @@ initTile = (_t)->
       @selected = false
       if @type isnt -1
         _.numMatched--
-        @alpha = 1 
+        @alpha = 1
       if _.pathMatches.length > 0 && @isMatched
-        last(_.pathMatches).pop() 
+        last(_.pathMatches).pop()
 
-  _t.o.reset = -> 
+  _t.o.reset = ->
     @alpha = 0; @type = -1
-  
-  _t.o.updateType = -> 
+
+  _t.o.updateType = ->
     @type = -1  if @alpha < 1
 
 initUI = ->

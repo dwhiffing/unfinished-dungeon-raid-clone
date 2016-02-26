@@ -1,5 +1,4 @@
-doNextAction = -> 
-  console.log "donext"
+doNextAction = ->
   if _.tilesToPop and _.tilesToPop.length > 0
     popTile()
     _.time.events.add _.popTime, doNextAction
@@ -11,11 +10,11 @@ doNextAction = ->
       _.gridMoving = false
     # _.time.events.add _.popTime, doNextAction
     else
-      _.time.events.add 500, -> 
+      _.time.events.add 500, ->
         _.tiles.callAll("destroy")
-        _.sound.play "new"
+        # _.sound.play "new"
         fadeOut()
-        _.time.events.add 2000, newRoom 
+        _.time.events.add 2000, newRoom
 
 popTile = ->
   _.gridMoving = true
@@ -26,8 +25,8 @@ popTile = ->
     tile = _.tilesToPop.shift()
   if tile? and tile.o.isMatched or tile.o.type is -1
     if tile.o.type isnt -1
-      tile.o.destroy() 
-      _.time.events.add _.popTime/2, -> _.sound.play "pop"+_.combo
+      tile.o.destroy()
+      # _.time.events.add _.popTime/2, -> _.sound.play "pop"+_.combo
     moveHero(tile.o.x, tile.o.y)
     _.hero.t = tile
     _.lTile = tile.o
@@ -51,7 +50,7 @@ checkAdjacent = (nTile) ->
       if nTile.t isnt _.hero.t
         if nTile.t is neighbours[dir]
           if match(nTile, _.lTile) or (_.pathMatches.length>0 && _.lTile.isMatched)
-            nTile.select() 
+            nTile.select()
             doMatch(nTile) if _.numMatched >= 3
       else
         deselectBefore _.hero
@@ -73,7 +72,7 @@ deselectBefore = (tile) ->
     p--
   checkMatches()
 
-checkMatches = -> 
+checkMatches = ->
   # get all the current matches and reset the tile booleans
   matchesOnBoard = _.tileArray.getMatches()
   _.tiles.setAll("hasMatch", false)
@@ -85,11 +84,11 @@ checkMatches = ->
   # that match is selected in the path
   for match in _.pathMatches
     if match.length < 3
-      match = [] 
+      match = []
       _.pathMatches.pop()
     for tile in match
       tile.isMatched = true
-  drawArrow()  
+  drawArrow()
 
 doMatch = (tile) ->
   # if tile is the same type as our last matched piece, add it to that match
@@ -101,7 +100,7 @@ doMatch = (tile) ->
     matchType = _.lTile.type
     for tile in _.path
       if tile.type is matchType and not tile.isMatched
-        match.push tile 
+        match.push tile
         tile.isMatched = true
     # add it if it is large enough then check the current state of matches
     _.pathMatches.push(match) if match.length >= 3

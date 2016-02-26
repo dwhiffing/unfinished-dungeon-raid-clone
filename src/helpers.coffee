@@ -2,18 +2,18 @@ debugTiles = ->
   # debug info about each tile's index and type
   if _.uiFade.alpha is 0.4 or _.uiFade.alpha is 0
     _.tiles.forEach (tile) ->
-      tX = (_.startX + tile.t.x * _.tSize)-_.tSize/2.2  
+      tX = (_.startX + tile.t.x * _.tSize)-_.tSize/2.2
       tY = (_.startY + tile.t.y * _.tSize)-_.tSize/3
       tS = ( canvasSize / 20) / 3
-      
+
       color = "#fff"
-      color = "#ff0000" if tile.type is -1 
+      color = "#ff0000" if tile.type is -1
       color = "#00ff00" if tile.type is 0
       color = "#ff00ff" if tile.hasMatch && !tile.isMatched
       color = "#0000ff" if tile.isMatched
-      
+
       _.debug.renderText tile.t.x+","+tile.t.y, tX, tY-tS, color, tS+"px Courier"
-      
+
       _.debug.renderText tile.type, tX, tY, color, tS+"px Courier"
 
 drawArrow = ->
@@ -71,7 +71,7 @@ newRoom = ->
   doNextAction()
 
 spawnTile = (tile) ->
-  tile.selected = false; 
+  tile.selected = false;
   tile.o.type   = _.rnd.integerInRange 1, _.numTypes
   tile.o.frame  = tile.o.type - 1
   tile.o.alpha  = 1
@@ -81,7 +81,7 @@ spawnTile = (tile) ->
 spawnPlayer = ->
   tX = _.rnd.integerInRange(0,_.rSize)
   tY = _.rnd.integerInRange(0,_.cSize)
-  _.hero.t = _.tileArray.getPiece x: tX, y: tY 
+  _.hero.t = _.tileArray.getPiece x: tX, y: tY
   _.hero.x = _.hero.t.o.x
   _.hero.y = _.hero.t.o.y
   resetPath()
@@ -110,7 +110,7 @@ match = (_a,_b) ->
 last = (arr) -> arr[arr.length-1]
 
 initLine = (line,width,color,x,y) ->
-  line.lineStyle width,color; 
+  line.lineStyle width,color;
   line.moveTo(x,y) if x? and y?
 
 checkPath = ->
@@ -119,7 +119,7 @@ checkPath = ->
 resetPath = ->
   _.tiles.callAll "deselect"; _.uiFade.alpha = 0; resetArrow();_.path = [_.hero]; _.numMatched = 0; _.pathMatches = []
 
-getRandom = (low, high) -> 
+getRandom = (low, high) ->
   ~~(Math.random() * (high - low)) + low
 
 checkArrowColour = (tile) ->

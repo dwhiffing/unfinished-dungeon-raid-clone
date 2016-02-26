@@ -9,14 +9,14 @@ preload = ->
     _.load.audio "pop"+n, "snd/pop"+n+".mp3"
   _.load.audio "new", "snd/next_level.mp3"
 
-create = -> 
+create = ->
   initVars()
   createGame()
 
 update = ->
 
-render = -> 
-  debugTiles()
+render = ->
+  # debugTiles()
 
 initVars = ->
   # init global game vars
@@ -28,14 +28,14 @@ initVars = ->
   _.numMatched = 0
   _.combo      = 0
   _.level      = 0
-  _.numTypes   = 4
+  _.numTypes   = 5
   _.maxPopTime = 150
   _.popTime    = _.maxPopTime
 
 _ = new Phaser.Game(
   canvasSize
-  canvasSize
-  Phaser.CANVAS, "super-candy-adventure-saga", 
+  canvasSize+canvasSize
+  Phaser.CANVAS, "super-candy-adventure-saga",
     preload: preload
     create: create
     update: update
